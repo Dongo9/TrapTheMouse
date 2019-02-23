@@ -119,8 +119,6 @@ public class Gioco extends Thread{
 			e.printStackTrace();
 		}
 		
-		System.out.println(facts.getPrograms().toString());
-		
 		InputProgram encoding=new ASPInputProgram();
 		encoding.addFilesPath(encoding_topo);
 		encoding.addProgram(getEncodings(encoding_topo));
@@ -140,8 +138,13 @@ public class Gioco extends Thread{
 		}
 		
 		//GENERO OUTPUT DAL DOCUMENTO
-		Output output=handler.startSync(); //------> NON FUNZIONA L'OUTPUT :(
+		Output output=handler.startSync();
 		AnswerSets answersets=(AnswerSets) output;
+		
+		System.out.println("La grandezza degli answer set e': " + answersets.getAnswersets().size());
+		
+		ArrayList<Scelgo> sca=new ArrayList<Scelgo>();
+		
 		for (AnswerSet a:answersets.getAnswersets())
 		{
 			try {
@@ -151,6 +154,7 @@ public class Gioco extends Thread{
 					{
 						Scelgo sc=(Scelgo) o;
 						System.out.println("scelgo("+sc.getX()+","+sc.getY()+")");
+						sca.add(sc);
 					}
 				}
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -159,6 +163,16 @@ public class Gioco extends Thread{
 				e.printStackTrace();
 			}
 		}
+		
+		schema[topo.getX()][topo.getY()]=vuoto;
+		topo.setX(sca.get(0).getX());
+		topo.setY(sca.get(0).getY());
+		schema[topo.getX()][topo.getY()]=mouse;
+		System.out.println("Nuova posizione topo: " +"<"+topo.getX()+","+topo.getY()+">");
+		gp.repaint();
+	
+		handler.removeProgram(encoding);
+		handler.removeProgram(facts);
 	}
 
 	private String getEncodings(String encoding_topo2) {

@@ -1,42 +1,55 @@
-#maxint=8. %MI SA MOLTO SUPERFLUO
+val(0..8).
 
-%GUESS AND CHECK PRINCIPALE
-scelgo(X2,Y2)|nonScelgo(X2,Y2):-inCammino(X1,Y1,X2,Y2),topo(X1,Y1).
+cell(R,C) :- val(R), val(C).
 
+even(X) :- val(X), #mod(X,2,0).
 
-%ADIACENZE PRINCIPALI
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),Y1=Y2,X2=X1-1.
+odd(X) :- val(X), not even(X).
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),Y1=Y2,X2=X1+1.
+adjacent(R1,C1,R2,C2) :- cell(R1,C1), cell(R2,C2), R1=R2, C2=C1+1.
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X1=X2,Y2=Y1+1.
+adjacent(R1,C1,R2,C2) :- cell(R1,C1), cell(R2,C2), R1=R2, C2=C1-1.
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X1=X2,Y2=Y1-1.
+adjacent(R1,C1,R2,C2) :- even(R1), cell(R1,C1), cell(R2,C2), R2=R1-1, C2=C1-1.
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X2=X1+1,Y2=Y1+1.
+adjacent(R1,C1,R2,C2) :- even(R1), cell(R1,C1), cell(R2,C2), R2=R1-1, C2=C1.
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X2=X1-1,Y2=Y1-1.
+adjacent(R1,C1,R2,C2) :- even(R1), cell(R1,C1), cell(R2,C2), R2=R1+1, C2=C1-1.
 
+adjacent(R1,C1,R2,C2) :- even(R1), cell(R1,C1), cell(R2,C2), R2=R1+1, C2=C1.
 
-%SCELGO BORDO
-bordo(X,Y) :- casella(X,Y), Y=9.
+adjacent(R1,C1,R2,C2) :- odd(R1), cell(R1,C1), cell(R2,C2), R2=R1-1, C2=C1.
 
-bordo(X,Y) :- casella(X,Y), X=9.
+adjacent(R1,C1,R2,C2) :- odd(R1), cell(R1,C1), cell(R2,C2), R2=R1-1, C2=C1+1.
 
-bordo(X,Y) :- casella(X,Y), Y=0.
+adjacent(R1,C1,R2,C2) :- odd(R1), cell(R1,C1), cell(R2,C2), R2=R1+1, C2=C1.
 
-bordo(X,Y) :- casella(X,Y), X=0.
+adjacent(R1,C1,R2,C2) :- odd(R1), cell(R1,C1), cell(R2,C2), R2=R1+1, C2=C1+1.
 
-%SECONDO GUESS AND CHECK PER SCREMARE LE ADIACENZE DA QUELLE NON OCCUPATE DA OSTACOLI
-inCammino(X1,Y1,X2,Y2) | fuoriCammino(X1,Y1,X2,Y2) :- adiacente(X1,Y1,X2,Y2), not muro(X2,Y2).
+maxVal(M) :- #max{ X : val(X) }=M.
 
-%RICORSIONE PER VEDERE SE HO RAGGIUNTO IL BORDO
-raggiunto(X2,Y2) :- topo(X1,Y1), inCammino(X1,Y1,X2,Y2).
+minVal(Min) :- #min{ X : val(X) } = Min.
 
-raggiunto(X2,Y2) :- raggiunto(X1,Y1), inCammino(X1,Y1,X2,Y2).
+edge(R,C) :- cell(R,C), minVal(R).
 
-goal(1) :-  raggiunto(X,Y), bordo(X,Y).
+edge(R,C) :- cell(R,C), maxVal(R).
 
-:- #count{ X: goal(X) } < 1. % UNA VIA D'USCITA RAGGIUNTA
+edge(R,C) :- cell(R,C), minVal(C).
 
-%QUALE WEAK CONSTRAINT?
+edge(R,C) :- cell(R,C), maxVal(C).
+
+inPath(R1,C1,R2,C2) | outPath(R1,C1,R2,C2) :- adjacent(R1,C1,R2,C2), not muro(R2,C2).
+
+reached(R,C) :- mouse(R1,C1), inPath(R1,C1,R,C).
+
+reached(R,C) :- reached(R1,C1), inPath(R1,C1,R,C).
+
+goal(1) :-  reached(R,C), edge(R,C).
+
+:- #count{ X : goal(X) } < 1.
+
+:~ inPath(R1,C1,R2,C2). [1:1]
+
+:~ inPath(_,_,R1,C1), wall(R3,C3), adjacent(R1,C1,R3,C3). [2:1]
+
+scelgo(R,C) :- inPath(R1,C1,R,C), topo(R1,C1).
