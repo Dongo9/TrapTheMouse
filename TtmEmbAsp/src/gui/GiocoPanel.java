@@ -40,16 +40,15 @@ public class GiocoPanel extends JPanel{
 			{
 				if (gioco.schema[i][j]==0) {
 					
-					if (i%2==0)
-					{
-						g.drawImage(terreno, 105 + j * 58, 55 + i * 53, null);
-					}
-					
-					else
-					{
-						g.drawImage(terreno, 135 + j * 58,
-								55 + i * 53, null);
-					}
+						if (i%2==0)
+						{
+							g.drawImage(terreno, 105 + j * 58, 55 + i * 53, null);
+						}
+						
+						else
+						{
+							g.drawImage(terreno, 135 + j * 58, 55 + i * 53, null);
+						}
 				}
 				
 				else if (gioco.schema[i][j]==1) {

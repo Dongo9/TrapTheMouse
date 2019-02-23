@@ -89,10 +89,6 @@ public class Gioco extends Thread{
 	
 	public void muovi_topo()
 	{
-		//AGGIUNGE OPZIONI ALL'HANDLER (COSI' DISTINGUO LE DUE FASI DI GIOCO)
-//		handler.addOption(new OptionDescriptor("-filter=mossaTopo"));
-//		handler.addOption(new OptionDescriptor("-n=1"));
-		
 		//PASSO AL PROGRAMMA L'INPUT CHE HO RACCOLTO
 		InputProgram facts=new ASPInputProgram();			
 		
@@ -163,9 +159,6 @@ public class Gioco extends Thread{
 				e.printStackTrace();
 			}
 		}
-		
-		
-		//PULISCO HANDLER
 	}
 
 	private String getEncodings(String encoding_topo2) {

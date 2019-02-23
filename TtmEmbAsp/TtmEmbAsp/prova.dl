@@ -1,30 +1,45 @@
 #maxint=8.
 
 %SELEZIONO ADIACENZE
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X1=X2,Y2=Y1+1.
+adiacente(X1,Y1,X2,Y2):-casella(X1,Y1),casella(X2,Y2),X1=X2,Y2=Y1+1.
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X1=X2,Y2=Y1-1.
+adiacente(X1,Y1,X2,Y2):-casella(X1,Y1),casella(X2,Y2),X1=X2,Y2=Y1-1.
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),Y1=Y2,X2=X1-1.
+adiacente(X1,Y1,X2,Y2):-casella(X1,Y1),casella(X2,Y2),Y1=Y2,X2=X1-1.
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),Y1=Y2,X2=X1+1.
+adiacente(X1,Y1,X2,Y2):-casella(X1,Y1),casella(X2,Y2),Y1=Y2,X2=X1+1.
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),Y2=Y1-1,X2=X1-1.
+adiacente(X1,Y1,X2,Y2):-casella(X1,Y1),casella(X2,Y2),Y2=Y1-1,X2=X1-1.
 
-adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),Y2=Y1+1,X2=X1+1.
+adiacente(X1,Y1,X2,Y2):-casella(X1,Y1),casella(X2,Y2),Y2=Y1-1,X2=X1+1.
 
 %SELEZIONO BORDI
 
-edge(X,Y):-casella(X,Y),X=0.
+bordo(X,Y):-casella(X,Y),X=0.
 
-edge(X,Y):-casella(X,Y),Y=0.
+bordo(X,Y):-casella(X,Y),Y=0.
 
-edge(X,Y):-casella(X,Y),X=8.
+bordo(X,Y):-casella(X,Y),X=8.
 
-edge(X,Y):-casella(X,Y),Y=8.
+bordo(X,Y):-casella(X,Y),Y=8.
 
 
+%CALCOLO PERCORSO MINIMO
+inCammino(X1,Y1,X2,Y2):-adiacente(X1,Y1,X2,Y2),not muro(X2,Y2).
+
+step(X2,Y2):-topo(X,Y),inCammino(X,Y,X2,Y2).
+
+step(X2,Y2):-step(X,Y),inCammino(X,Y,X2,Y2).
+
+%ARRIVO AL BORDO
+arrivo(X):-step(X,Y),bordo(X,Y).
+
+%SCARTO ANSWER SETS CHE NON PREVEDONO UN ARRIVO
+:-#count{X:arrivo(X)}<1.
+
+%MINIMIZZO I PASSI
+:~inCammino(X,Y,X2,Y2). [1:1]
 
 %RISPOSTA DEFINITIVA SUL TOPO (DA MODIFICARE)
-scelgo(X2,Y2):-adiacente(X,Y,X2,Y2),not muro(X,Y).
+scelgo(X2,Y2):-inCammino(X,Y,X2,Y2),topo(X,Y).
 
