@@ -1,0 +1,42 @@
+#maxint=8. %MI SA MOLTO SUPERFLUO
+
+%GUESS AND CHECK PRINCIPALE
+scelgo(X2,Y2)|nonScelgo(X2,Y2):-inCammino(X1,Y1,X2,Y2),topo(X1,Y1).
+
+
+%ADIACENZE PRINCIPALI
+adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),Y1=Y2,X2=X1-1.
+
+adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),Y1=Y2,X2=X1+1.
+
+adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X1=X2,Y2=Y1+1.
+
+adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X1=X2,Y2=Y1-1.
+
+adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X2=X1+1,Y2=Y1+1.
+
+adiacente(X1,Y1,X2,Y2):-topo(X1,Y1),casella(X2,Y2),X2=X1-1,Y2=Y1-1.
+
+
+%SCELGO BORDO
+bordo(X,Y) :- casella(X,Y), Y=9.
+
+bordo(X,Y) :- casella(X,Y), X=9.
+
+bordo(X,Y) :- casella(X,Y), Y=0.
+
+bordo(X,Y) :- casella(X,Y), X=0.
+
+%SECONDO GUESS AND CHECK PER SCREMARE LE ADIACENZE DA QUELLE NON OCCUPATE DA OSTACOLI
+inCammino(X1,Y1,X2,Y2) | fuoriCammino(X1,Y1,X2,Y2) :- adiacente(X1,Y1,X2,Y2), not muro(X2,Y2).
+
+%RICORSIONE PER VEDERE SE HO RAGGIUNTO IL BORDO
+raggiunto(X2,Y2) :- topo(X1,Y1), inCammino(X1,Y1,X2,Y2).
+
+raggiunto(X2,Y2) :- raggiunto(X1,Y1), inCammino(X1,Y1,X2,Y2).
+
+goal(1) :-  raggiunto(X,Y), bordo(X,Y).
+
+:- #count{ X: goal(X) } < 1. % UNA VIA D'USCITA RAGGIUNTA
+
+%QUALE WEAK CONSTRAINT?
