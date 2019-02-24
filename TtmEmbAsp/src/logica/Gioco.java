@@ -130,7 +130,7 @@ public class Gioco extends Thread{
 		handler.addProgram(encoding);
 		
 		try {
-			ASPMapper.getInstance().registerClass(Scelgo.class);
+			ASPMapper.getInstance().registerClass(ScelgoTopo.class);
 		} catch (ObjectNotValidException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -145,16 +145,16 @@ public class Gioco extends Thread{
 		
 		System.out.println("La grandezza degli answer set e': " + answersets.getAnswersets().size());
 		
-		ArrayList<Scelgo> sca=new ArrayList<Scelgo>();
+		ArrayList<ScelgoTopo> sca=new ArrayList<ScelgoTopo>();
 		
 		for (AnswerSet a:answersets.getAnswersets())
 		{
 			try {
 				for (Object o: a.getAtoms())
 				{
-					if (o instanceof Scelgo)
+					if (o instanceof ScelgoTopo)
 					{
-						Scelgo sc=(Scelgo) o;
+						ScelgoTopo sc=(ScelgoTopo) o;
 						System.out.println("scelgo("+sc.getX()+","+sc.getY()+")");
 						sca.add(sc);
 					}

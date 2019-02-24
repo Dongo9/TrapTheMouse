@@ -1,0 +1,50 @@
+val(0..8).
+
+even(X) :- val(X), #mod(X,2,0).
+
+odd(X) :- val(X), not even(X).
+
+adiacente(R1,C1,R2,C2) :- casella(R1,C1), casella(R2,C2), R1=R2, C2=C1+1.s
+
+adiacente(R1,C1,R2,C2) :- casella(R1,C1), casella(R2,C2), R1=R2, C2=C1-1.
+
+adiacente(R1,C1,R2,C2) :- even(R1), casella(R1,C1), casella(R2,C2), R2=R1-1, C2=C1-1.
+
+adiacente(R1,C1,R2,C2) :- even(R1), casella(R1,C1), casella(R2,C2), R2=R1-1, C2=C1.
+
+adiacente(R1,C1,R2,C2) :- even(R1), casella(R1,C1), casella(R2,C2), R2=R1+1, C2=C1-1.
+
+adiacente(R1,C1,R2,C2) :- even(R1), casella(R1,C1), casella(R2,C2), R2=R1+1, C2=C1.
+
+adiacente(R1,C1,R2,C2) :- odd(R1), casella(R1,C1), casella(R2,C2), R2=R1-1, C2=C1.
+
+adiacente(R1,C1,R2,C2) :- odd(R1), casella(R1,C1), casella(R2,C2), R2=R1-1, C2=C1+1.
+
+adiacente(R1,C1,R2,C2) :- odd(R1), casella(R1,C1), casella(R2,C2), R2=R1+1, C2=C1.
+
+adiacente(R1,C1,R2,C2) :- odd(R1), casella(R1,C1), casella(R2,C2), R2=R1+1, C2=C1+1.
+
+bordo(X,Y):-casella(X,Y),X=0.
+
+bordo(X,Y):-casella(X,Y),Y=0.
+
+bordo(X,Y):-casella(X,Y),X=8.
+
+bordo(X,Y):-casella(X,Y),Y=8.
+
+inPath(X,Y,X2,Y2)|outPath(X,Y,X2,Y2):-adiacente(X,Y,X2,Y2),not muro(X2,Y2).
+
+step(X2,Y2):-topo(X,Y),inPath(X,Y,X2,Y2).
+
+step(X2,Y2):-step(X,Y),inPath(X,Y,X2,Y2).
+
+goal(1):-step(X,Y),bordo(X,Y).
+
+:-#count{X:goal(X)}<1.
+
+:~inPath(X,Y,X2,Y2). [1:1]
+
+:-risp(X,Y),topo(X,Y).
+
+risp(X2,Y2):-inPath(X,Y,X2,Y2),topo(X,Y).
+
