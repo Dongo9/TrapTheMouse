@@ -41,6 +41,6 @@ arrivo(1):-step(X,Y),bordo(X,Y).
 %MINIMIZZO I PASSI
 :~inCammino(X,Y,X2,Y2). [1:1]
 
-%RISPOSTA DEFINITIVA SUL TOPO (DA MODIFICARE)
+%RISPOSTA DEFINITIVA SUL TOPO
 scelgo(X2,Y2):-inCammino(X,Y,X2,Y2),topo(X,Y).
 

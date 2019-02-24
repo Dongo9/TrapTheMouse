@@ -119,6 +119,8 @@ public class Gioco extends Thread{
 			e.printStackTrace();
 		}
 		
+		System.out.println(facts.getPrograms().toString());
+		
 		InputProgram encoding=new ASPInputProgram();
 		encoding.addFilesPath(encoding_topo);
 		encoding.addProgram(getEncodings(encoding_topo));

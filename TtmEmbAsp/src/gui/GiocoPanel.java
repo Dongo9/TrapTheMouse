@@ -24,7 +24,7 @@ public class GiocoPanel extends JPanel{
 		terreno=new ImageIcon("src/assets/background.png").getImage();
 		muro=new ImageIcon("src/assets/wall.png").getImage();
 		topo=new ImageIcon("src/assets/mouse.png").getImage();
-		gioco.start();
+		//gioco.start();
 	}
 
 	@Override
