@@ -42,5 +42,5 @@ arrivo(1):-step(X,Y),bordo(X,Y).
 :~inCammino(X,Y,X2,Y2). [1:1]
 
 %RISPOSTA DEFINITIVA SUL TOPO
-scelgo(X2,Y2):-inCammino(X,Y,X2,Y2),topo(X,Y).
+scelgoTopo(X2,Y2):-inCammino(X,Y,X2,Y2),topo(X,Y).
 
