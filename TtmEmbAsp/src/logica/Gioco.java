@@ -32,7 +32,7 @@ public class Gioco extends Thread{
 	private boolean gioca=true;
 
 	private static Handler handler=new DesktopHandler(new DLVDesktopService("TtmEmbAsp/dlv.mingw.exe")); //HANDLER PER PASSARE I PARAMETRI AL FILE
-	private static String encoding_topo="TtmEmbAsp/prova.dl";
+	private static String encoding_topo="TtmEmbAsp/IATopo.dl";
 	
 	public Gioco(GiocoPanel gp)
 	{
@@ -75,20 +75,20 @@ public class Gioco extends Thread{
 		// TODO Auto-generated method stub
 		while(gioca)
 		{
-			//PER ORA MUOVO SOLO IL TOPO
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	
-			muovi_topo();
+			ScelgoTopo move=muovi_topo();
+			schema[topo.getX()][topo.getY()]=vuoto;
+			topo.setX(move.getX());
+			topo.setY(move.getY());
+			schema[topo.getX()][topo.getY()]=mouse;
+			gp.repaint();
 		}
 	}
 	
-	public void muovi_topo()
+	public ScelgoTopo muovi_topo()
 	{
+		handler.addOption(new OptionDescriptor("-filter=scelgoTopo "));
+		handler.addOption(new OptionDescriptor("-n=1 "));
+		
 		//PASSO AL PROGRAMMA L'INPUT CHE HO RACCOLTO
 		InputProgram facts=new ASPInputProgram();			
 		
@@ -143,9 +143,7 @@ public class Gioco extends Thread{
 		Output output=handler.startSync();
 		AnswerSets answersets=(AnswerSets) output;
 		
-		System.out.println("La grandezza degli answer set e': " + answersets.getAnswersets().size());
-		
-		ArrayList<ScelgoTopo> sca=new ArrayList<ScelgoTopo>();
+		ScelgoTopo sc=null;
 		
 		for (AnswerSet a:answersets.getAnswersets())
 		{
@@ -154,9 +152,8 @@ public class Gioco extends Thread{
 				{
 					if (o instanceof ScelgoTopo)
 					{
-						ScelgoTopo sc=(ScelgoTopo) o;
+						sc=(ScelgoTopo) o;
 						System.out.println("scelgo("+sc.getX()+","+sc.getY()+")");
-						sca.add(sc);
 					}
 				}
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -165,16 +162,13 @@ public class Gioco extends Thread{
 				e.printStackTrace();
 			}
 		}
-		
-		schema[topo.getX()][topo.getY()]=vuoto;
-		topo.setX(sca.get(0).getX());
-		topo.setY(sca.get(0).getY());
-		schema[topo.getX()][topo.getY()]=mouse;
-		System.out.println("Nuova posizione topo: " +"<"+topo.getX()+","+topo.getY()+">");
-		gp.repaint();
-	
+
 		handler.removeProgram(encoding);
 		handler.removeProgram(facts);
+		handler.removeOption(0);
+		handler.removeOption(1);
+	
+		return sc;
 	}
 
 	private String getEncodings(String encoding_topo2) {

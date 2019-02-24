@@ -4,7 +4,7 @@ even(X) :- val(X), #mod(X,2,0).
 
 odd(X) :- val(X), not even(X).
 
-adiacente(R1,C1,R2,C2) :- casella(R1,C1), casella(R2,C2), R1=R2, C2=C1+1.s
+adiacente(R1,C1,R2,C2) :- casella(R1,C1), casella(R2,C2), R1=R2, C2=C1+1.
 
 adiacente(R1,C1,R2,C2) :- casella(R1,C1), casella(R2,C2), R1=R2, C2=C1-1.
 
@@ -47,4 +47,3 @@ goal(1):-step(X,Y),bordo(X,Y).
 :-risp(X,Y),topo(X,Y).
 
 scelgoTopo(X2,Y2):-inPath(X,Y,X2,Y2),topo(X,Y).
-
