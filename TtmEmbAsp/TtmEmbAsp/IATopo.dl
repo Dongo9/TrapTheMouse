@@ -44,6 +44,6 @@ goal(1):-step(X,Y),bordo(X,Y).
 
 :~inPath(X,Y,X2,Y2). [1:1]
 
-:-risp(X,Y),topo(X,Y).
+:-scelgoTopo(X,Y),topo(X,Y).
 
 scelgoTopo(X2,Y2):-inPath(X,Y,X2,Y2),topo(X,Y).

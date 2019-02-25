@@ -28,11 +28,13 @@ public class Gioco extends Thread{
 	private Topo topo;
 	private ArrayList<Casella> caselle; //PER CONSERVARE TUTTI GLI OGGETTI CASELLA
 	private ArrayList<Muro> muri; //PER CONSERVARE TUTTI GLI OGGETTI MURO
+	private ArrayList<Step> steps=new ArrayList<Step>(); //PER CONSERVARE GLI STEP DEL TOPO (GLOBALE)
 	private GiocoPanel gp;
 	private boolean gioca=true;
 
 	private static Handler handler=new DesktopHandler(new DLVDesktopService("TtmEmbAsp/dlv.mingw.exe")); //HANDLER PER PASSARE I PARAMETRI AL FILE
 	private static String encoding_topo="TtmEmbAsp/IATopo.dl";
+	private static String encoding_ostacolo="TtmEmbAsp/IAOstacolo.dl";
 	
 	public Gioco(GiocoPanel gp)
 	{
@@ -81,12 +83,17 @@ public class Gioco extends Thread{
 			topo.setY(move.getY());
 			schema[topo.getX()][topo.getY()]=mouse;
 			gp.repaint();
+			
+//			inserisci_ostacolo();
+//			gp.repaint();
+			
+			steps.clear();
 		}
 	}
 	
 	public ScelgoTopo muovi_topo()
 	{
-		handler.addOption(new OptionDescriptor("-filter=scelgoTopo "));
+		handler.addOption(new OptionDescriptor("-filter=scelgoTopo,step "));
 		handler.addOption(new OptionDescriptor("-n=1 "));
 		
 		//PASSO AL PROGRAMMA L'INPUT CHE HO RACCOLTO
@@ -131,6 +138,7 @@ public class Gioco extends Thread{
 		
 		try {
 			ASPMapper.getInstance().registerClass(ScelgoTopo.class);
+			ASPMapper.getInstance().registerClass(Step.class);
 		} catch (ObjectNotValidException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -155,6 +163,13 @@ public class Gioco extends Thread{
 						sc=(ScelgoTopo) o;
 						System.out.println("scelgo("+sc.getX()+","+sc.getY()+")");
 					}
+					
+					else if (o instanceof Step)
+					{
+						Step st=(Step) o;
+						System.out.println("step("+st.getX()+","+st.getY()+")");
+						steps.add(st);
+					}
 				}
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 					| NoSuchMethodException | SecurityException | InstantiationException e) {
@@ -170,12 +185,105 @@ public class Gioco extends Thread{
 	
 		return sc;
 	}
+	
+	public ScelgoMuro inserisci_ostacolo()
+	{
+		//AGGIUNGO OPZIONI PER L'A.S. FINALE
+		handler.addOption(new OptionDescriptor("-filter=scelgoMuro "));
+		handler.addOption(new OptionDescriptor("-n=1 "));
+//		
+		//DICHIARO NUOVO PROGRAMMA
+		InputProgram facts=new ASPInputProgram();
+		
+		//AGGIUNGO CASELLE
+		for (Casella c: caselle)
+		{
+			try {
+				facts.addObjectInput(c);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		//AGGIUNGO MURI
+		for (Muro m: muri)
+		{
+			try {
+				facts.addObjectInput(m);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		//AGGIUNGO STEP TOPO
+		for (Step s: steps)
+		{
+			try {
+				facts.addObjectInput(s);
+			} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+		}
+		
+		//AGGIUNGO TOPO
+		try {
+			facts.addObjectInput(topo);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//AGGIUNGO TUTTO IL MALLOPPO ALL'HANDLER
+		System.out.println(facts.getPrograms().toString());
+		InputProgram encoding=new ASPInputProgram();
+		encoding.addFilesPath(encoding_ostacolo);
+		encoding.addProgram(getEncodings(encoding_ostacolo));
+		
+		handler.addProgram(facts); 
+		handler.addProgram(encoding);
+		
+		try {
+			ASPMapper.getInstance().registerClass(Step.class);
+		} catch (ObjectNotValidException | IllegalAnnotationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Output o=handler.startSync();
+		AnswerSets answers=(AnswerSets) o;
+		
+		ScelgoMuro sm=null;
+		
+		for (AnswerSet a:answers.getAnswersets())
+		{
+			try {
+				for (Object obj: a.getAtoms())
+				{
+					if (obj instanceof ScelgoMuro)
+					{
+						sm=(ScelgoMuro) obj;
+						return sm;
+					}
+				}
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+					| NoSuchMethodException | SecurityException | InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return sm;
+	}
 
-	private String getEncodings(String encoding_topo2) {
+	private String getEncodings(String enc) {
 		BufferedReader reader;
 		StringBuilder builder = new StringBuilder();
 		try {
-			reader = new BufferedReader(new FileReader(encoding_topo2));
+			reader = new BufferedReader(new FileReader(enc));
 			String line = "";
 			while ((line = reader.readLine()) != null) {
 				builder.append(line);
