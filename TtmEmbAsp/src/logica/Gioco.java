@@ -78,16 +78,26 @@ public class Gioco extends Thread{
 		while(gioca)
 		{
 			ScelgoTopo move=muovi_topo();
-			schema[topo.getX()][topo.getY()]=vuoto;
-			topo.setX(move.getX());
-			topo.setY(move.getY());
-			schema[topo.getX()][topo.getY()]=mouse;
-			gp.repaint();
 			
-//			inserisci_ostacolo();
-//			gp.repaint();
+			if (move.equals(null))
+			{
+				gioca=false;
+			}
 			
-			steps.clear();
+			else
+			{	
+				schema[topo.getX()][topo.getY()]=vuoto;
+				topo.setX(move.getX());
+				topo.setY(move.getY());
+				schema[topo.getX()][topo.getY()]=mouse;
+				gp.repaint();
+				
+				inserisci_ostacolo();
+	//			gp.repaint();
+				
+				steps.clear();
+			}
+			
 		}
 	}
 	
@@ -275,6 +285,11 @@ public class Gioco extends Thread{
 				e.printStackTrace();
 			}
 		}
+		
+		handler.removeProgram(encoding);
+		handler.removeProgram(facts);
+		handler.removeOption(0);
+		handler.removeOption(1);
 		
 		return sm;
 	}
